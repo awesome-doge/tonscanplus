@@ -25,51 +25,58 @@ function fire(){
             gray: { back: config.gray, text: config.white }
         }
 
-        document.querySelectorAll('.custom__style__for__custom_name').forEach(el => el.remove())
-        
+        // 一次性設置樣式
         const styleForCustomName = document.createElement('style')
         customElements.add(styleForCustomName)
         styleForCustomName.classList.add('custom__style__for__custom_name')
         styleForCustomName.innerHTML = ` .custom__name:before { color: ${config.yellow}; }`
+        document.querySelector('.tx-history-wrap')?.prepend(styleForCustomName)
 
-        document.querySelector('.tx-history-wrap').prepend(styleForCustomName)
+        // 使用 MutationObserver 替代輪詢
+        const observer = new MutationObserver((mutations) => {
+            browser.storage.local.get(['state']).then(storage => {
+                if (storage.state !== "on") return;
+                
+                const elements = document.querySelectorAll("[data-loopa]:not(.processed)");
+                if (elements.length === 0) return;
 
-        const intId1 = setInterval(() => {
-            if(browser.runtime.id !== undefined){
-                browser.storage.local.get(['state'], function(storage) {
-                    if(storage.state === "on"){
-                        const elements = document.querySelectorAll("[data-loopa]")
-                        if (elements.length === 0) return;
-                        
-                        const addresses = Array.from(elements).map(element => 
-                            element.dataset.loopa + element.dataset.poopa
-                        );
-                        
-                        browser.storage.local.get(addresses).then(storageData => {
-                            elements.forEach(element => {
-                                const tonAddress = element.dataset.loopa + element.dataset.poopa;
-                                const current = storageData[tonAddress];
-                                if(current !== undefined){
-                                    element.classList.add('custom__name')
-                                    element.dataset.loopa = current.name
-                                    element.dataset.poopa = `(${replacer(tonAddress)})`
-                                }
-                            });
-                        });
-                    }
+                const addresses = Array.from(elements).map(element => 
+                    element.dataset.loopa + element.dataset.poopa
+                );
+
+                // 標記已處理的元素
+                elements.forEach(el => el.classList.add('processed'));
+
+                browser.storage.local.get(addresses).then(storageData => {
+                    elements.forEach(element => {
+                        const tonAddress = element.dataset.loopa + element.dataset.poopa;
+                        const current = storageData[tonAddress];
+                        if(current !== undefined){
+                            element.classList.add('custom__name')
+                            element.dataset.loopa = current.name
+                            element.dataset.poopa = `(${replacer(tonAddress)})`
+                        }
+                    });
                 });
-            }
-        }, 2000);
+            });
+        });
 
-        intervalIds.push(intId1)
+        // 觀察 DOM 變化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        customElements.add({ remove: () => observer.disconnect() });
+
         const ALL = () =>{ 
-                console.debug('create ALL')
-                const ALL = new Action(objColors.gray, "ALL")
-                ALL.setNext(new Action(objColors.red, "OUT"))
-                .setNext(new Action(objColors.green, "IN"))
-                .setNext(ALL)
-                return ALL
-            }
+            console.debug('create ALL')
+            const ALL = new Action(objColors.gray, "ALL")
+            ALL.setNext(new Action(objColors.red, "OUT"))
+            .setNext(new Action(objColors.green, "IN"))
+            .setNext(ALL)
+            return ALL
+        }
 
         let current = ALL()
         const action = function () { 
@@ -183,29 +190,49 @@ function fire(){
 
         function loadAllData(){
             console.debug('loadAllData')
-            browser.storage.local.get('state', ({ state }) => {
+            browser.storage.local.get('state').then(({ state }) => {
                 if(state !== 'on') return;
-                
-                const idInterval = setInterval(() => { 
-                    const button = document.querySelector('.mugen-scroll__button');
-                    if (button) button.click();
-                }, 100)
-                
-                intervalIds.push(idInterval)
-                throttle( id => {
-                    clearInterval(id)
-                    setButton()
-                    createBtnSort()
-                    const intId2 = setInterval(addActionFromClickAddress, 500)
-                    const intId3 = setInterval(classAdd, 1000)
-                    intervalIds.push(intId2)
-                    intervalIds.push(intId3)
-                }, config.loadAllDataTimeout)(idInterval)
-            })
+
+                // 首次加載：立即點擊加載按鈕
+                const loadMoreButton = document.querySelector('.mugen-scroll__button');
+                if (!loadMoreButton) return;
+
+                // 立即執行一次加載
+                const initialLoad = () => {
+                    loadMoreButton.click();
+                    setButton();
+                    createBtnSort();
+                };
+                initialLoad();
+
+                // 設置觀察者用於後續的滾動加載
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            loadMoreButton.click();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                observer.observe(loadMoreButton);
+                customElements.add({ remove: () => observer.disconnect() });
+
+                // 減少輪詢間隔
+                const intId2 = setInterval(addActionFromClickAddress, 1000);
+                const intId3 = setInterval(classAdd, 2000);
+                intervalIds.push(intId2, intId3);
+            });
         }
 
-        throttle(loadAllData, 100)()
-        addEvent('custom__event__need_sort', sorting)
+        // 立即執行初始化
+        loadAllData();
+        
+        // 同時保留頁面加載完成後的初始化
+        window.addEventListener('load', () => {
+            setTimeout(loadAllData, 500);
+        });
+
+        addEvent('custom__event__need_sort', sorting);
     })
 }
 
@@ -237,54 +264,59 @@ class Action{
 }
 
 function classAdd(){
-    try{
-        browser.storage.local.get('state', ({ state }) => {
-            if(state !== 'on') return;
-            const classIn = 'custom__parent__in'
-            const classOut = 'custom__parent__out'
-            const elements = document.querySelectorAll(`tbody tr:not(.custom__row)`)
-            if(elements.length > 0){
-                console.debug('classAdd')
-                elements.forEach(e => {
-                    const elOut = e.querySelector('.tx-table__badge--out')
-                    const elIn = e.querySelector('.tx-table__badge--in')
+    browser.storage.local.get('state').then(({ state }) => {
+        if(state !== 'on') return;
+        
+        const newElements = document.querySelectorAll(`tbody tr:not(.custom__row)`);
+        if(newElements.length === 0) return;
 
-                    e.classList.add("custom__row")
+        const batchOperations = [];
+        newElements.forEach(e => {
+            e.classList.add("custom__row");
+            const elOut = e.querySelector('.tx-table__badge--out');
+            const elIn = e.querySelector('.tx-table__badge--in');
 
-                    if (elOut !== null && !e.classList.contains(classOut) ){ e.classList.add(classOut) }
-                    else if(elIn !== null && !e.classList.contains(classIn) ){ e.classList.add(classIn) }
-                })
-                setDataset()
-                let event = new Event("custom__event__need_sort", {bubbles: true})
-                window.dispatchEvent(event);
+            if (elOut) e.classList.add('custom__parent__out');
+            else if (elIn) e.classList.add('custom__parent__in');
+
+            if (e.parentNode) {
+                const value = calculateValue(e);
+                if (value !== null) {
+                    e.parentNode.dataset.value = value;
+                    if (!elementsSortNormal.includes(e.parentNode)) {
+                        elementsSortNormal.push(e.parentNode);
+                    }
+                    if (!elementsSort.includes(e.parentNode)) {
+                        elementsSort.push(e.parentNode);
+                    }
+                }
             }
-        })
-    } catch {}
+        });
+
+        if (newElements.length > 0) {
+            window.dispatchEvent(new Event("custom__event__need_sort"));
+        }
+    });
 }
 
-function setDataset({ selector='.custom__row',  key='value' }={}){
-    console.debug('setDataset')
-    document.querySelectorAll(selector).forEach((row) => {
-        if( row.parentNode.dataset[key] === undefined){
-            let arrNum
-            console.debug(navigator.language)
-            if(navigator.language === 'en'){
-                arrNum  = row.querySelector('td:nth-child(6) div').innerText.replaceAll(/\s|TON|,/gi, '').split(/[\.]/gi) 
-            } else {
-                arrNum  = row.querySelector('td:nth-child(6) div').innerText.replaceAll(/\s|TON|\./gi, '').split(/[,]/gi)
-            }
-            
-            if(arrNum.length > 1){
-                const lZero = arrNum.slice(arrNum.length-1).join('')
-                const gZero = arrNum.slice(0, arrNum.length-1).join('')
-                row.parentNode.dataset[key] = parseFloat(gZero+"."+lZero)
-            } else {
-                row.parentNode.dataset[key] = parseInt(arrNum)
-            }
+function calculateValue(row) {
+    try {
+        const valueText = row.querySelector('td:nth-child(6) div')?.innerText;
+        if (!valueText) return null;
+
+        const isEnglish = navigator.language === 'en';
+        const cleanText = valueText.replaceAll(/\s|TON/gi, '');
+        
+        if (isEnglish) {
+            const parts = cleanText.split('.');
+            return parts.length > 1 ? parseFloat(parts.join('.')) : parseInt(parts[0]);
+        } else {
+            const parts = cleanText.split(',');
+            return parts.length > 1 ? parseFloat(parts.join('.')) : parseInt(parts[0]);
         }
-        if ( row.parentNode.dataset[key] !== undefined && !elementsSortNormal.includes(row.parentNode) ) { elementsSortNormal.push(row.parentNode) }
-        if ( !elementsSort.includes(row.parentNode) ) { elementsSort.push(row.parentNode) }
-    })
+    } catch {
+        return null;
+    }
 }
 
 function addActionFromClickAddress(){
