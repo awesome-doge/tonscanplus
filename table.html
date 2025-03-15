@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -207,28 +207,28 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h4 class="mb-0">TON 地址管理器</h4>
+                <h4 class="mb-0">TON Address Manager</h4>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                    <i class='bx bx-plus'></i> 新增地址
+                    <i class='bx bx-plus'></i> Add Address
                 </button>
             </div>
             
             <div class="card-body">
                 <div class="warning">
                     <i class='bx bx-info-circle'></i> 
-                    提示：點擊地址可以修改其名稱標籤。使用複選框可以進行批量操作。
+                    Tip: Click on an address to modify its label. Use checkboxes for bulk operations.
                 </div>
 
                 <div class="actions-bar">
                     <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="搜尋地址或名稱..." class="form-control">
+                        <input type="text" id="searchInput" placeholder="Search addresses or names..." class="form-control">
                     </div>
                     <div class="bulk-actions">
                         <button class="btn btn-danger" id="deleteSelected" disabled>
-                            <i class='bx bx-trash'></i> 刪除所選
+                            <i class='bx bx-trash'></i> Delete Selected
                         </button>
                         <button class="btn btn-secondary" id="exportSelected" disabled>
-                            <i class='bx bx-export'></i> 導出所選
+                            <i class='bx bx-export'></i> Export Selected
                         </button>
                     </div>
                 </div>
@@ -242,10 +242,10 @@
                                         <input type="checkbox" id="selectAll">
                                     </div>
                                 </th>
-                                <th>名稱</th>
-                                <th>TON 地址</th>
-                                <th>類型</th>
-                                <th width="120">操作</th>
+                                <th>Name</th>
+                                <th>TON Address</th>
+                                <th>Type</th>
+                                <th width="120">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="addressTableBody"></tbody>
@@ -255,37 +255,37 @@
         </div>
     </div>
 
-    <!-- 新增地址模態框 -->
+    <!-- Add Address Modal -->
     <div class="modal fade" id="addAddressModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">新增 TON 地址</h5>
+                    <h5 class="modal-title">Add TON Address</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addAddressForm">
                         <div class="mb-3">
-                            <label class="form-label">名稱</label>
+                            <label class="form-label">Name</label>
                             <input type="text" class="form-control" id="nameInput" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">TON 地址</label>
+                            <label class="form-label">TON Address</label>
                             <input type="text" class="form-control" id="addressInput" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">類型</label>
+                            <label class="form-label">Type</label>
                             <select class="form-control" id="typeInput">
-                                <option value="personal">個人</option>
-                                <option value="business">商業</option>
-                                <option value="other">其他</option>
+                                <option value="personal">Personal</option>
+                                <option value="business">Business</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="saveAddress">保存</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveAddress">Save</button>
                 </div>
             </div>
         </div>

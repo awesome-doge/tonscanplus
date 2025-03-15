@@ -189,7 +189,7 @@ function setupEventListeners() {
 
     // 批量刪除
     document.getElementById('deleteSelected').addEventListener('click', async () => {
-        if (confirm('確定要刪除選中的地址嗎？')) {
+        if (confirm('Are you sure you want to delete the selected addresses?')) {
             for (const address of selectedItems) {
                 await browser.storage.local.remove(address);
             }
@@ -226,7 +226,7 @@ function setupEventListeners() {
         const type = document.getElementById('typeInput').value;
 
         if (!name || !address) {
-            alert('請填寫所有必填欄位');
+            alert('Please fill in all required fields');
             return;
         }
 
@@ -306,16 +306,16 @@ function renderTable(searchTerm = '') {
 // 獲取類型標籤
 function getTypeLabel(type) {
     const types = {
-        'personal': '個人',
-        'business': '商業',
-        'other': '其他'
+        'personal': 'Personal',
+        'business': 'Business',
+        'other': 'Other'
     };
     return types[type] || type;
 }
 
 // 編輯地址
 async function editAddress(addr) {
-    const newName = prompt('請輸入新的名稱：', addr.name);
+    const newName = prompt('Enter new name:', addr.name);
     if (newName && newName !== addr.name) {
         await browser.storage.local.set({
             [addr.address]: { 
