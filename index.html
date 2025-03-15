@@ -1,44 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="css/index.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TON Address Manager</title>
+        <link href="bootstrap/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary-color: #0088CC;
+                --secondary-color: #005580;
+                --background-color: #1a1a1a;
+                --text-color: #ffffff;
+                --border-color: #2d2d2d;
+            }
+
+            body {
+                background-color: var(--background-color);
+                color: var(--text-color);
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .app {
+                background-color: #242424;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 2rem;
+                width: 100%;
+                max-width: 600px;
+                margin: 1rem;
+            }
+
+            .app__header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .app__title {
+                font-size: 1.5rem;
+                margin: 0;
+                color: var(--text-color);
+            }
+
+            .app__controls {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .btn-group-toggle {
+                background-color: #333;
+                border-radius: 4px;
+                padding: 2px;
+            }
+
+            .app__toggle.btn {
+                color: var(--text-color);
+                background-color: transparent;
+                border: none;
+                padding: 0.5rem 1rem;
+                transition: all 0.2s;
+            }
+
+            .app__toggle.btn.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                color: var(--text-color);
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            .form-control {
+                background-color: #333;
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                padding: 0.75rem;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+
+            .form-control:focus {
+                background-color: #333;
+                border-color: var(--primary-color);
+                color: var(--text-color);
+                box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.25);
+            }
+
+            .btn {
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+
+            .btn-dark {
+                background-color: #333;
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+            }
+
+            .btn-dark:hover {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                color: white;
+            }
+
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background-color: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+
+            .app__actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .btn i {
+                margin-right: 0.5rem;
+            }
+        </style>
         <script src="js/jquery-3.6.1.min.js"></script>
     </head>
     <body>
-        <div id="app">
-            <div class="app__container flex flex-left">
-                <div class="app__container__toggle">
+        <div class="app">
+            <div class="app__header">
+                <h1 class="app__title">TON Address Manager</h1>
+                <div class="app__controls">
                     <div class="btn-group btn-group-toggle" id="app__toggle" data-toggle="buttons">
-                        <label data-state="on" id="app__toggle__on" class="app__toggle btn btn-light">
-                        <input type="radio" name="opt" id="opt1" autocomplete="off" checked> On
+                        <label data-state="on" id="app__toggle__on" class="app__toggle btn active">
+                            <input type="radio" name="opt" id="opt1" autocomplete="off" checked> On
                         </label>
-                        <label data-state="off" id="app__toggle__off" class="app__toggle btn btn-light">
-                        <input type="radio" name="opt" id="opt2" autocomplete="off"> Off
+                        <label data-state="off" id="app__toggle__off" class="app__toggle btn">
+                            <input type="radio" name="opt" id="opt2" autocomplete="off"> Off
                         </label>
                     </div>
                 </div>
-            
-                
-                <button id="app__button__clear-storage" type="button" class="btn btn-dark">Clear</button>
-                <button id="app__button__new-tab__table" type="button" class="btn btn-dark">DB</button>
+            </div>
+
+            <form id="addressForm">
+                <div class="form-group">
+                    <label for="app__input__ton-address" class="form-label">TON Address</label>
+                    <input type="text" class="form-control" id="app__input__ton-address" name="ton-address" 
+                           required minlength="4" maxlength="60" placeholder="Enter TON address">
                 </div>
 
-            <div class="app__container flex flex-column">
-                <div class="app__container">
-                    <label for="ton-address" id="app__label__ton-address" >TON Address:</label>
-                    <input type="text" id="app__input__ton-address" name="ton-address" required minlength="4" maxlength="60">
+                <div class="form-group">
+                    <label for="app__input__name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="app__input__name" name="name" 
+                           required minlength="4" maxlength="30" placeholder="Enter name">
                 </div>
-                <div class="app__container">
-                    <label for="name" id="app__label__name" >Name:</label>
-                    <input type="text" id="app__input__name" name="name" required minlength="4" maxlength="30">
-                    
+
+                <div class="app__actions">
+                    <button id="app__button__clear-storage" type="button" class="btn btn-dark">
+                        <i class='bx bx-trash'></i>Clear
+                    </button>
+                    <button id="app__button__new-tab__table" type="button" class="btn btn-dark">
+                        <i class='bx bx-table'></i>Database
+                    </button>
+                    <button id="app__button__ton-address_and_name" type="button" class="btn btn-primary">
+                        <i class='bx bx-plus'></i>Add Address
+                    </button>
                 </div>
-            </div>
-        <div class="app__container flex flex-right"><button id="app__button__ton-address_and_name" type="button" class="btn btn-dark">Add</button></div>
+            </form>
         </div>
+
+        <script src="js/index.js"></script> 
     </body>
-    <script src="js/index.js"></script> 
 </html>
