@@ -39,58 +39,27 @@ function fire(){
                 browser.storage.local.get(['state'], function(storage) {
                     if(storage.state === "on"){
                         const elements = document.querySelectorAll("[data-loopa]")
-                        elements.forEach(element => {
-                            const tonAddress = element.dataset.loopa+element.dataset.poopa
-                            browser.storage.local.get(tonAddress, function(storageAddr) {
-                                const current = storageAddr[tonAddress] 
+                        if (elements.length === 0) return;
+                        
+                        const addresses = Array.from(elements).map(element => 
+                            element.dataset.loopa + element.dataset.poopa
+                        );
+                        
+                        browser.storage.local.get(addresses).then(storageData => {
+                            elements.forEach(element => {
+                                const tonAddress = element.dataset.loopa + element.dataset.poopa;
+                                const current = storageData[tonAddress];
                                 if(current !== undefined){
                                     element.classList.add('custom__name')
                                     element.dataset.loopa = current.name
                                     element.dataset.poopa = `(${replacer(tonAddress)})`
                                 }
-                            })
-                        })
-
-                        document.querySelectorAll(".card-main-address").forEach( element => {
-                            const currentElement = element.innerText.trim()
-                            const idForCustomElement = 'current-ton-address__custom-element'
-                            const customText = val => "Name: "+val
-
-                            async function getData(){
-                                const data = await browser.storage.local.get(currentElement)
-                                const curElement = document.getElementById(idForCustomElement)
-                                if(Object.keys(data).length !== 0 ){
-                                    const current = data[currentElement]
-                                    if(current !== undefined){
-                                        if(curElement === null){
-                                            const el = document.createElement('span')
-
-                                            el.innerText = customText(current.name)
-                                            el.id = idForCustomElement
-                                            el.style =`
-                                                background: var(--body-background);
-                                                border-radius: 60px;
-                                                padding-left: 10px;
-                                                width: fit-content;
-                                                padding-right: 10px;
-                                                padding-bottom: 5px;
-                                                padding-top: 5px;
-                                            `
-                                            document.getElementsByClassName("card-main-address")[0].parentElement.append(el)
-                                        } else if(curElement.innerText !== customText(current.name)){
-                                            curElement.innerText = customText(current.name)
-                                        }
-                                    }
-                                } else {
-                                    curElement !== null && curElement.remove()
-                                }
-                            }
-                            getData()
-                        })
+                            });
+                        });
                     }
                 });
             }
-        }, 1000);
+        }, 2000);
 
         intervalIds.push(intId1)
         const ALL = () =>{ 
@@ -216,8 +185,12 @@ function fire(){
             console.debug('loadAllData')
             browser.storage.local.get('state', ({ state }) => {
                 if(state !== 'on') return;
-                const loaderElement = createLoader()
-                const idInterval = setInterval(() => { document.querySelector('.mugen-scroll__button').click() }, 100)
+                
+                const idInterval = setInterval(() => { 
+                    const button = document.querySelector('.mugen-scroll__button');
+                    if (button) button.click();
+                }, 100)
+                
                 intervalIds.push(idInterval)
                 throttle( id => {
                     clearInterval(id)
@@ -227,8 +200,6 @@ function fire(){
                     const intId3 = setInterval(classAdd, 1000)
                     intervalIds.push(intId2)
                     intervalIds.push(intId3)
-
-                    loaderElement.remove()
                 }, config.loadAllDataTimeout)(idInterval)
             })
         }
@@ -369,32 +340,6 @@ function createContainer(className="custom__sort__arrow"){
     container.style.width = '20px'
     container.style.height = '25px'
     return container
-}
-
-function createLoader(){
-    console.debug('createLoader')
-    const divTable = document.querySelector(".tx-history-wrap")
-    const div = document.createElement('div')
-    const img = document.createElement('img')
-    div.className = "custom__loader"
-    
-    div.style.position= "absolute";
-    div.style.width= "100%";
-    div.style.height= "100%";
-    div.style.background= "var(--card-background)";
-    div.style.zIndex= "100";
-    div.style.opacity= "0.8"
-    div.style.display= "flex";
-    div.style.justifyContent= "center";
-
-    img.src = browser.runtime.getURL("./icons/loader.png")
-    img.style.marginTop = "50px"
-    img.style.height = img.style.width = '50px'
-    img.style.userSelect = "none"
-
-    div.appendChild(img)
-    divTable.prepend(div)
-    return div
 }
 
 function throttle(call, timeout) {
