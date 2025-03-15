@@ -7,7 +7,7 @@ let customElements
 let customEvents
 
 function init(){
-    src = chrome.runtime.getURL("config.js");
+    src = browser.runtime.getURL("config.js");
     elementsSortNormal = []
     elementsSort = []
     newPage = false
@@ -35,13 +35,13 @@ function fire(){
         document.querySelector('.tx-history-wrap').prepend(styleForCustomName)
 
         const intId1 = setInterval(() => {
-            if(chrome.runtime.id !== undefined){
-                chrome.storage.local.get(['state'], function(storage) {
+            if(browser.runtime.id !== undefined){
+                browser.storage.local.get(['state'], function(storage) {
                     if(storage.state === "on"){
                         const elements = document.querySelectorAll("[data-loopa]")
                         elements.forEach(element => {
                             const tonAddress = element.dataset.loopa+element.dataset.poopa
-                            chrome.storage.local.get(tonAddress, function(storageAddr) {
+                            browser.storage.local.get(tonAddress, function(storageAddr) {
                                 const current = storageAddr[tonAddress] 
                                 if(current !== undefined){
                                     element.classList.add('custom__name')
@@ -57,7 +57,7 @@ function fire(){
                             const customText = val => "Name: "+val
 
                             async function getData(){
-                                const data = await chrome.storage.local.get(currentElement)
+                                const data = await browser.storage.local.get(currentElement)
                                 const curElement = document.getElementById(idForCustomElement)
                                 if(Object.keys(data).length !== 0 ){
                                     const current = data[currentElement]
@@ -122,7 +122,7 @@ function fire(){
 
         function setButton({ object=current } = {}){
             console.debug('setButton')
-            chrome.storage.local.get('state', ({ state }) => {
+            browser.storage.local.get('state', ({ state }) => {
                 if(state !== 'on') return;
 
                 document.querySelector(".tx-history-wrap thead th:nth-child(4)").innerHTML = `
@@ -135,7 +135,7 @@ function fire(){
 
         function createBtnSort({ defaultDirection = config.direction } = {}){
             console.debug('createBtnSort')
-            chrome.storage.local.get('state', ({ state }) => {
+            browser.storage.local.get('state', ({ state }) => {
                 if(state !== 'on') return;
                 
                 const genBtnSort = {}
@@ -194,7 +194,7 @@ function fire(){
 
         function sorting(){
             console.debug('sorting')
-            chrome.storage.local.get('state', ({ state }) => {
+            browser.storage.local.get('state', ({ state }) => {
                 if(state !== 'on') return;
 
                 if(config.direction !== config.so.enum.ALL){
@@ -214,7 +214,7 @@ function fire(){
 
         function loadAllData(){
             console.debug('loadAllData')
-            chrome.storage.local.get('state', ({ state }) => {
+            browser.storage.local.get('state', ({ state }) => {
                 if(state !== 'on') return;
                 const loaderElement = createLoader()
                 const idInterval = setInterval(() => { document.querySelector('.mugen-scroll__button').click() }, 100)
@@ -267,7 +267,7 @@ class Action{
 
 function classAdd(){
     try{
-        chrome.storage.local.get('state', ({ state }) => {
+        browser.storage.local.get('state', ({ state }) => {
             if(state !== 'on') return;
             const classIn = 'custom__parent__in'
             const classOut = 'custom__parent__out'
@@ -318,7 +318,7 @@ function setDataset({ selector='.custom__row',  key='value' }={}){
 
 function addActionFromClickAddress(){
     try{
-        chrome.storage.local.get('state', ({ state }) => {
+        browser.storage.local.get('state', ({ state }) => {
             if(state !== 'on') return;
             const elements = document.querySelectorAll(".address-link.clickable:not(.custom__click)")
             elements.forEach(e => {
@@ -387,7 +387,7 @@ function createLoader(){
     div.style.display= "flex";
     div.style.justifyContent= "center";
 
-    img.src = chrome.runtime.getURL("./icons/loader.png")
+    img.src = browser.runtime.getURL("./icons/loader.png")
     img.style.marginTop = "50px"
     img.style.height = img.style.width = '50px'
     img.style.userSelect = "none"
