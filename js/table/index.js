@@ -219,6 +219,44 @@ function setupEventListeners() {
         URL.revokeObjectURL(url);
     });
 
+    // 匯入地址
+    document.getElementById('importAddresses').addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const importedAddresses = JSON.parse(text);
+
+                if (!Array.isArray(importedAddresses)) {
+                    throw new Error('無效的檔案格式');
+                }
+
+                const importData = {};
+                for (const addr of importedAddresses) {
+                    if (!addr.address || !addr.name) {
+                        throw new Error('地址資料格式不正確');
+                    }
+                    importData[addr.address] = {
+                        name: addr.name,
+                        type: addr.type || 'local'
+                    };
+                }
+
+                await browser.storage.local.set(importData);
+                await loadAddresses();
+                alert('匯入成功！');
+            } catch (error) {
+                alert('匯入失敗：' + error.message);
+            }
+        };
+        input.click();
+    });
+
     // 新增地址
     document.getElementById('saveAddress').addEventListener('click', async () => {
         const name = document.getElementById('nameInput').value;
