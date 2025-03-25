@@ -18,7 +18,7 @@ A powerful browser extension for The Open Network (TON) blockchain explorer, bri
 
 The extension is available on Firefox Add-ons:
 
-[Install TonscanPlus](https://addons.mozilla.org/en-US/firefox/addon/tonscanplus/)
+[Install TonscanPlus](https://github.com/awesome-doge/tonscanplus/releases)
 
 ## How to Contribute
 
@@ -32,18 +32,6 @@ To contribute, please:
 1. Fork the repository
 2. Add your changes to `data.json`
 3. Submit a pull request with a clear description
-
-## Support the Project
-
-If you'd like to help improve TonscanPlus, you can:
-
-- Report bugs via our [Telegram bot](https://t.me/thedailytonbot)
-- Suggest new features
-- Help implement improvements (like real-time TOP 1000 address updates)
-
-## Stay Updated
-
-Follow our [Telegram channel](https://t.me/tonscanplus) for the latest updates and announcements.
 
 ## Acknowledgments
 
