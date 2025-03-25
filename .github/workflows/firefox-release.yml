@@ -25,18 +25,29 @@ jobs:
         run: |
           npm install -g web-ext
           
+      - name: Check project structure
+        run: |
+          echo "Checking project structure..."
+          ls -la
+          echo "Checking manifest.json..."
+          cat manifest.json
+          
       - name: Build extension
         run: |
-          web-ext build --source-dir . --artifacts-dir ./web-ext-artifacts
-          echo "Listing build artifacts:"
-          ls -la ./web-ext-artifacts
+          echo "Starting web-ext build..."
+          web-ext build --source-dir . --artifacts-dir ./web-ext-artifacts --verbose
+          echo "Build completed. Listing artifacts:"
+          ls -la ./web-ext-artifacts || true
           
       - name: Verify build artifacts
         run: |
+          echo "Verifying build artifacts..."
           if [ ! -d "./web-ext-artifacts" ]; then
             echo "Error: web-ext-artifacts directory not found"
             exit 1
           fi
+          echo "Contents of web-ext-artifacts:"
+          ls -la ./web-ext-artifacts
           if [ ! -f "./web-ext-artifacts/tonscanplus-*.zip" ]; then
             echo "Error: Extension zip file not found"
             exit 1
