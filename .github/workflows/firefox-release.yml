@@ -28,7 +28,19 @@ jobs:
       - name: Build extension
         run: |
           web-ext build --source-dir . --artifacts-dir ./web-ext-artifacts
+          echo "Listing build artifacts:"
           ls -la ./web-ext-artifacts
+          
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d "./web-ext-artifacts" ]; then
+            echo "Error: web-ext-artifacts directory not found"
+            exit 1
+          fi
+          if [ ! -f "./web-ext-artifacts/tonscanplus-*.zip" ]; then
+            echo "Error: Extension zip file not found"
+            exit 1
+          fi
           
       - name: Create Release
         id: create_release
