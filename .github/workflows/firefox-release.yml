@@ -48,7 +48,7 @@ jobs:
           fi
           echo "Contents of web-ext-artifacts:"
           ls -la ./web-ext-artifacts
-          if [ ! -f "./web-ext-artifacts/tonscanplus-*.zip" ]; then
+          if [ ! -f "./web-ext-artifacts/tonscan_-1.1.zip" ]; then
             echo "Error: Extension zip file not found"
             exit 1
           fi
@@ -70,6 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./web-ext-artifacts/tonscanplus-*.zip
+          asset_path: ./web-ext-artifacts/tonscan_-1.1.zip
           asset_name: tonscanplus-${{ github.run_number }}.zip
           asset_content_type: application/zip 
