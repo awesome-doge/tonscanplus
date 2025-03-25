@@ -10,7 +10,8 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "tonscanplus@gmail.com",
-      "strict_min_version": "109.0"
+      "strict_min_version": "109.0",
+      "update_url": "https://raw.githubusercontent.com/doge/tonscanplus/main/updates.json"
     }
   },
   "permissions": [
