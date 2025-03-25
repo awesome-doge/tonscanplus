@@ -301,13 +301,10 @@ function renderTable(searchTerm = '') {
                            ${selectedItems.has(addr.address) ? 'checked' : ''}>
                 </div>
             </td>
-            <td class="editable" data-field="name">${addr.name}</td>
+            <td class="editable" data-field="name" data-address="${addr.address}">${addr.name}</td>
             <td>${addr.address}</td>
             <td>${getTypeLabel(addr.type)}</td>
             <td>
-                <button class="btn btn-action edit-btn" data-address="${addr.address}">
-                    <i class='bx bx-edit-alt'></i>
-                </button>
                 <button class="btn btn-action delete-btn" data-address="${addr.address}">
                     <i class='bx bx-trash'></i>
                 </button>
@@ -324,8 +321,47 @@ function renderTable(searchTerm = '') {
             updateBulkActionButtons();
         });
 
-        tr.querySelector('.edit-btn').addEventListener('click', () => {
-            editAddress(addr);
+        // 添加直接編輯功能
+        const nameCell = tr.querySelector('.editable');
+        nameCell.addEventListener('click', () => {
+            const currentName = nameCell.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'form-control';
+            input.style.width = '100%';
+            input.style.padding = '4px 8px';
+            input.style.backgroundColor = '#333';
+            input.style.border = '1px solid var(--border-color)';
+            input.style.color = 'var(--text-color)';
+            input.style.borderRadius = '4px';
+
+            const saveEdit = async () => {
+                const newName = input.value.trim();
+                if (newName && newName !== currentName) {
+                    await browser.storage.local.set({
+                        [addr.address]: { 
+                            name: newName, 
+                            type: addr.type 
+                        }
+                    });
+                    nameCell.textContent = newName;
+                    await loadAddresses(); // 重新載入以更新排序
+                }
+                nameCell.style.display = '';
+                input.remove();
+            };
+
+            input.addEventListener('blur', saveEdit);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveEdit();
+                }
+            });
+
+            nameCell.style.display = 'none';
+            nameCell.parentNode.insertBefore(input, nameCell);
+            input.focus();
         });
 
         tr.querySelector('.delete-btn').addEventListener('click', async () => {
