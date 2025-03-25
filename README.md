@@ -1,53 +1,52 @@
-# TonscanPlus
+# TonscanPlus for Firefox
 
-There are a lot of different explorers on The Open Network, but when it comes to convenience and ease of use, many people choose tonscan.org. Thanks to its native-clear design, any user can find any address in just a few clicks.
+A powerful browser extension for The Open Network (TON) blockchain explorer, bringing enhanced functionality to tonscan.org. While tonscan.org is widely used for its clean interface, we've added a crucial missing feature - a personal address book.
 
-The Daily TON team consider it important to bring TON users something that still was not added by the original team of developers — the address book. In fact, the explorer has it, but there is no real opportunity for 99.9% of users to add some specific TON address or to save one for themselves to use.
+## Features
 
-That is why we decided to create this Google Chrome extension.
+- Add custom names to TON addresses locally
+- Filter transactions by type
+- Community-driven address database
+- Seamless integration with tonscan.org
 
-You can also follow the extension's updates [by subscribing to this Telegram channel](https://t.me/tonscanplus).
+## Current Limitations
 
-# Features
+- TOP 1000 addresses are not updated in real-time
+- NFT Royalty addresses are manually parsed
 
-- Add your custom names to TON addresses locally
+## Installation
 
-- Send pull requests to this repository to expand the community-driven database
+The extension is available on Firefox Add-ons:
 
-- Filter transactions by its type
+[Install TonscanPlus](https://addons.mozilla.org/en-US/firefox/addon/tonscanplus/)
 
-# Drawbacks
+## How to Contribute
 
-- TOP 1000 addresses do not update in real-time
+We welcome community contributions! You can help by:
 
-- NFT Royalty addresses were parsed manually
+1. Adding addresses to the `data.json` file via pull requests
+2. Following proper JSON syntax
+3. Including a reason for your contribution
 
-# How to contribute
+To contribute, please:
+1. Fork the repository
+2. Add your changes to `data.json`
+3. Submit a pull request with a clear description
 
-Please, open [a pull request](https://github.com/menschee/tonscanplus/pulls) if you want to add some addresses to `data.json` file. Don't forget to use .json syntax as well as **give the reason why you contribute this address**.
+## Support the Project
 
-# How to help the project
+If you'd like to help improve TonscanPlus, you can:
 
-If someone is ready to implement a new feature (e.g., TOP 1000 addresses parsing) or you have just found some bug, please, report about it via [Telegram bot](https://t.me/thedailytonbot).
+- Report bugs via our [Telegram bot](https://t.me/thedailytonbot)
+- Suggest new features
+- Help implement improvements (like real-time TOP 1000 address updates)
 
+## Stay Updated
 
-# Download
+Follow our [Telegram channel](https://t.me/tonscanplus) for the latest updates and announcements.
 
-The extenstion is available on Chrome Web Store:
+## Acknowledgments
 
-[Link](https://chrome.google.com/webstore/detail/tonscan%20/egonpnmjojlaogggbjklkbkflgipljpd?hl=en&authuser=0)
-
-# Special thanks
-
-- [catchain](https://github.com/catchain) — for his convenient explorer
-- [Vudi Kingyru](https://t.me/investkingyru) — for finding an experienced developer
-- [The Daily TON](https://t.me/thedailyton) – it's me
-
-# Donation
-
-Speed up the release of a new update by donating to this address: 
->EQCM2ReRAEkCGaAM33ZUx-_vAj0qPgI5TeBQtIp1tjjFe1aa
-
-or scan this qr-code
-
-![My address: EQCM2ReRAEkCGaAM33ZUx-_vAj0qPgI5TeBQtIp1tjjFe1aa](https://raw.githubusercontent.com/menschee/tonscanplus/main/qr.png)
+- [catchain](https://github.com/catchain) - For the excellent tonscan.org explorer
+- [Vudi Kingyru](https://t.me/investkingyru) - For connecting us with experienced developers
+- [The Daily TON](https://t.me/thedailyton) - Project maintainers
